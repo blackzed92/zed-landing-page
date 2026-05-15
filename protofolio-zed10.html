@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  
+  <title>zed10 | Saad Hamada Elzayat</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #050a0f;
+      --bg-secondary: #090f18;
+      --bg-card: rgba(10, 20, 35, 0.85);
+      --accent-blue: #00d4ff;
+      --accent-green: #00ff9d;
+      --accent-red: #ff2244;
+      --text-primary: #e8f4fd;
+      --text-muted: #5a7a99;
+      --border-glow: rgba(0, 212, 255, 0.25);
+      --grid-color: rgba(0, 212, 255, 0.04);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: 'Rajdhani', sans-serif;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* Custom Cursor */
+    .cursor {
+      position: fixed; width: 10px; height: 10px;
+      background: var(--accent-blue); border-radius: 50%;
+      pointer-events: none; z-index: 9999; transition: transform 0.1s;
+      box-shadow: 0 0 10px var(--accent-blue), 0 0 20px var(--accent-blue);
+    }
+    .cursor-ring {
+      position: fixed; width: 36px; height: 36px;
+      border: 1px solid rgba(0,212,255,0.5); border-radius: 50%;
+      pointer-events: none; z-index: 9998;
+      transition: transform 0.15s, width 0.2s, height 0.2s;
+    }
+
+    /* ---- BACKGROUND ---- */
+    .grid-bg {
+      position: fixed; inset: 0; z-index: 0;
+      background-image:
+        linear-gradient(var(--grid-color) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
+    .grid-bg::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 50%, transparent 40%, var(--bg-primary) 100%);
+    }
+
+    /* Matrix Rain Canvas */
+    #matrix-canvas {
+      position: fixed; top: 0; left: 0; z-index: 1;
+      opacity: 0.04; pointer-events: none;
+    }
+
+    /* Noise overlay */
+    .noise {
+      position: fixed; inset: 0; z-index: 2;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; opacity: 0.35;
+    }
+
+    /* ---- NAV ---- */
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 100;
+      padding: 1rem 2rem;
+      background: linear-gradient(180deg, rgba(5,10,15,0.95) 0%, transparent 100%);
+      backdrop-filter: blur(4px);
+      border-bottom: 1px solid rgba(0,212,255,0.08);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .nav-logo {
+      font-family: 'Orbitron', monospace;
+      font-weight: 900; font-size: 1.4rem;
+      color: var(--accent-blue);
+      text-shadow: 0 0 20px rgba(0,212,255,0.6);
+      letter-spacing: 0.1em;
+    }
+    .nav-logo span { color: var(--accent-green); }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.78rem; color: var(--text-muted);
+      text-decoration: none; letter-spacing: 0.08em;
+      transition: color 0.2s, text-shadow 0.2s;
+      position: relative;
+    }
+    .nav-links a::before { content: '> '; color: var(--accent-green); opacity: 0; transition: opacity 0.2s; }
+    .nav-links a:hover { color: var(--accent-blue); text-shadow: 0 0 10px rgba(0,212,255,0.5); }
+    .nav-links a:hover::before { opacity: 1; }
+
+    /* ---- SECTIONS ---- */
+    section {
+      position: relative; z-index: 10;
+      padding: 6rem 2rem;
+      max-width: 1100px; margin: 0 auto;
+    }
+    section.full-width { max-width: 100%; padding: 6rem 0; }
+
+    .section-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.72rem; letter-spacing: 0.25em;
+      color: var(--accent-green); margin-bottom: 0.5rem;
+      display: flex; align-items: center; gap: 0.75rem;
+      
+    }
+    .hero-photo-placeholder {
+    width: 100%;
+    max-width: 400px; /* It will be 400px on PC, but shrink on phones */
+    aspect-ratio: 1 / 1; /* Keeps it square */
+}
+
+    .section-label::after {
+      content: ''; flex: 1; max-width: 60px; height: 1px;
+      background: var(--accent-green); opacity: 0.5;
+    }
+    .section-title {
+      font-family: 'Orbitron', monospace;
+      font-weight: 700; font-size: clamp(1.6rem, 4vw, 2.4rem);
+      color: var(--text-primary);
+      margin-bottom: 3rem;
+    }
+    .section-title span { color: var(--accent-blue); }
+
+    /* ---- HERO ---- */
+    #hero {
+      min-height: 100vh; display: flex; align-items: center;
+      padding-top: 5rem; max-width: 100%;
+      padding-left: 4rem; padding-right: 4rem;
+    }
+    .hero-inner {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 4rem; align-items: center; max-width: 1100px; margin: 0 auto; width: 100%;
+    }
+    .hero-tag {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.75rem; letter-spacing: 0.3em;
+      color: var(--accent-green);
+      margin-bottom: 1rem;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .hero-tag::before {
+      content: '';
+      width: 30px; height: 1px; background: var(--accent-green);
+    }
+    .hero-name {
+      font-family: 'Orbitron', monospace;
+      font-weight: 900;
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+    }
+    .hero-name .first { color: var(--text-primary); }
+    .hero-name .last {
+      color: var(--accent-blue);
+      text-shadow: 0 0 30px rgba(0,212,255,0.4);
+    }
+    .hero-typed-wrapper {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+      min-height: 2rem;
+    }
+    .hero-typed-wrapper .prompt { color: var(--accent-green); margin-right: 0.5rem; }
+    .typed-cursor { color: var(--accent-blue); }
+    .hero-desc {
+      font-size: 1.05rem; line-height: 1.7;
+      color: rgba(232,244,253,0.55);
+      max-width: 480px;
+      margin-bottom: 2.5rem;
+    }
+    .btn-group { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .btn-primary {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.82rem; letter-spacing: 0.12em;
+      padding: 0.85rem 2rem;
+      border: 1px solid var(--accent-blue);
+      color: var(--bg-primary);
+      background: var(--accent-blue);
+      text-decoration: none;
+      transition: all 0.25s;
+      clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+      box-shadow: 0 0 20px rgba(0,212,255,0.3), inset 0 0 20px rgba(0,212,255,0.1);
+    }
+    .btn-primary:hover {
+      background: transparent; color: var(--accent-blue);
+      box-shadow: 0 0 30px rgba(0,212,255,0.5);
+    }
+    .btn-secondary {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.82rem; letter-spacing: 0.12em;
+      padding: 0.85rem 2rem;
+      border: 1px solid rgba(0,212,255,0.3);
+      color: var(--accent-blue);
+      background: transparent;
+      text-decoration: none;
+      transition: all 0.25s;
+      clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+    }
+    .btn-secondary:hover {
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 20px rgba(0,212,255,0.2);
+      background: rgba(0,212,255,0.05);
+    }
+
+    /* Hero Image */
+    .hero-image-wrapper {
+      position: relative; display: flex; justify-content: center;
+    }
+    .hero-image-frame {
+      position: relative; width: 320px; height: 380px;
+    }
+    .hero-image-frame::before {
+      content: '';
+      position: absolute; inset: -2px;
+      background: linear-gradient(135deg, var(--accent-blue), transparent, var(--accent-green));
+      clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+      z-index: -1;
+    }
+    .hero-image-frame::after {
+      content: '';
+      position: absolute; inset: 2px;
+      background: var(--bg-secondary);
+      clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+      z-index: -1;
+    }
+    .hero-image-frame img,
+    .hero-photo-placeholder {
+      width: 100%; height: 100%; object-fit: cover;
+      clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+      display: block;
+    }
+    .hero-photo-placeholder {
+      background: linear-gradient(160deg, #0a1828 0%, #0d2137 50%, #0a1525 100%);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 1rem;
+    }
+    .hero-photo-placeholder svg { opacity: 0.3; }
+    .hero-photo-placeholder span {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.65rem; letter-spacing: 0.2em;
+      color: var(--text-muted); opacity: 0.6;
+    }
+    .hero-corner {
+      position: absolute;
+      width: 20px; height: 20px;
+      border-color: var(--accent-blue);
+      border-style: solid;
+      opacity: 0.8;
+    }
+    .hero-corner.tl { top: -8px; left: -8px; border-width: 2px 0 0 2px; }
+    .hero-corner.tr { top: -8px; right: -8px; border-width: 2px 2px 0 0; }
+    .hero-corner.bl { bottom: -8px; left: -8px; border-width: 0 0 2px 2px; }
+    .hero-corner.br { bottom: -8px; right: -8px; border-width: 0 2px 2px 0; }
+    .scan-line {
+      position: absolute; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent-blue), transparent);
+      animation: scan 3s linear infinite; opacity: 0.5;
+    }
+    @keyframes scan { 0% { top: 0%; } 100% { top: 100%; } }
+
+    .hero-stats {
+      display: flex; gap: 2.5rem; margin-top: 2rem;
+    }
+    .stat { text-align: left; }
+    .stat-num {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.6rem; font-weight: 700;
+      color: var(--accent-blue);
+    }
+    .stat-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.65rem; letter-spacing: 0.15em;
+      color: var(--text-muted); margin-top: 0.1rem;
+    }
+
+    /* ---- ABOUT ---- */
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+    .about-text p { color: rgba(232,244,253,0.6); line-height: 1.85; font-size: 1.05rem; margin-bottom: 1.2rem; }
+    .about-text strong { color: var(--accent-blue); font-weight: 600; }
+    .about-stack {
+      display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.5rem;
+    }
+    .stack-tag {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.72rem; letter-spacing: 0.1em;
+      padding: 0.4rem 0.9rem;
+      border: 1px solid rgba(0,212,255,0.2);
+      color: var(--accent-blue);
+      background: rgba(0,212,255,0.04);
+      transition: all 0.2s;
+    }
+    .stack-tag:hover { border-color: var(--accent-blue); background: rgba(0,212,255,0.1); }
+    .about-terminal {
+      background: rgba(5,12,20,0.9);
+      border: 1px solid rgba(0,212,255,0.15);
+      border-radius: 4px;
+      overflow: hidden;
+      font-family: 'Share Tech Mono', monospace;
+    }
+    .terminal-bar {
+      background: rgba(0,212,255,0.06);
+      padding: 0.6rem 1rem;
+      border-bottom: 1px solid rgba(0,212,255,0.1);
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .t-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .terminal-body { padding: 1.5rem; font-size: 0.82rem; line-height: 2; }
+    .t-comment { color: #3a5a72; }
+    .t-key { color: var(--accent-blue); }
+    .t-val { color: var(--accent-green); }
+    .t-str { color: #ffcb6b; }
+    .t-arr { color: #c792ea; }
+
+    /* ---- ZED10 IDENTITY ---- */
+    .zed10-section {
+      background: linear-gradient(135deg, rgba(0,212,255,0.03) 0%, rgba(0,255,157,0.03) 100%);
+      border: 1px solid rgba(0,212,255,0.12);
+      padding: 3rem;
+      position: relative;
+      clip-path: polygon(0 0, calc(100% - 30px) 0, 100% 30px, 100% 100%, 30px 100%, 0 calc(100% - 30px));
+    }
+    .zed10-section::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 60% 60% at 80% 50%, rgba(0,212,255,0.05), transparent);
+      pointer-events: none;
+    }
+    .zed10-logo-large {
+      font-family: 'Orbitron', monospace;
+      font-weight: 900; font-size: clamp(3rem, 10vw, 6rem);
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(0,212,255,0.3);
+      position: absolute; right: 3rem; top: 50%;
+      transform: translateY(-50%);
+      letter-spacing: -0.02em;
+      pointer-events: none; user-select: none;
+    }
+    .zed10-content { max-width: 600px; position: relative; z-index: 2; }
+    .zed10-content p { color: rgba(232,244,253,0.6); line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem; }
+    .zed10-content strong { color: var(--accent-green); }
+    .zed10-badges { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.5rem; }
+    .zed10-badge {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.72rem; padding: 0.5rem 1rem;
+      border: 1px solid rgba(0,255,157,0.25);
+      color: var(--accent-green);
+      background: rgba(0,255,157,0.04);
+      display: flex; align-items: center; gap: 0.4rem;
+    }
+    .zed10-badge::before { content: '$'; opacity: 0.5; }
+
+    /* ---- SKILLS ---- */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 1rem;
+    }
+    .skill-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(0,212,255,0.1);
+      padding: 1.5rem 1rem;
+      text-align: center;
+      transition: all 0.3s;
+      position: relative; overflow: hidden;
+      cursor: default;
+    }
+    .skill-card::before {
+      content: ''; position: absolute;
+      bottom: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--accent-blue), var(--accent-green));
+      transform: scaleX(0); transition: transform 0.3s;
+    }
+    .skill-card:hover { border-color: rgba(0,212,255,0.4); transform: translateY(-4px); box-shadow: 0 10px 30px rgba(0,212,255,0.1); }
+    .skill-card:hover::before { transform: scaleX(1); }
+    .skill-icon { font-size: 2rem; margin-bottom: 0.75rem; display: block; }
+    .skill-name {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.7rem; letter-spacing: 0.1em;
+      color: var(--text-primary);
+    }
+    .skill-level {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.62rem; color: var(--text-muted);
+      margin-top: 0.4rem; letter-spacing: 0.1em;
+    }
+    .skill-bar {
+      width: 100%; height: 2px;
+      background: rgba(0,212,255,0.1);
+      margin-top: 0.75rem; border-radius: 1px; overflow: hidden;
+    }
+    .skill-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-blue), var(--accent-green));
+      transition: width 1s ease-out;
+    }
+
+    /* ---- PROJECTS ---- */
+    .projects-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    .project-card {
+      background: rgba(8, 18, 30, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(0,212,255,0.12);
+      padding: 2rem;
+      position: relative; overflow: hidden;
+      transition: all 0.35s;
+      clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 18px 100%, 0 calc(100% - 18px));
+    }
+    .project-card::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,212,255,0.06), transparent 70%);
+      opacity: 0; transition: opacity 0.35s;
+    }
+    .project-card:hover { border-color: rgba(0,212,255,0.35); transform: translateY(-6px); box-shadow: 0 20px 50px rgba(0,212,255,0.12); }
+    .project-card:hover::before { opacity: 1; }
+    .project-type {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.68rem; letter-spacing: 0.2em;
+      color: var(--accent-green); margin-bottom: 1rem;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .project-type::before { content: '//'; color: var(--text-muted); }
+    .project-title {
+      font-family: 'Orbitron', monospace;
+      font-weight: 700; font-size: 1.05rem;
+      color: var(--text-primary); margin-bottom: 1rem;
+      line-height: 1.3;
+    }
+    .project-desc {
+      font-size: 0.9rem; color: rgba(232,244,253,0.5);
+      line-height: 1.7; margin-bottom: 1.5rem;
+    }
+    .project-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.5rem; }
+    .project-tag {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.65rem; padding: 0.25rem 0.65rem;
+      border: 1px solid rgba(0,212,255,0.2);
+      color: var(--accent-blue); background: rgba(0,212,255,0.04);
+    }
+    .project-links { display: flex; gap: 1rem; }
+    .project-link {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.72rem; letter-spacing: 0.1em;
+      color: var(--text-muted); text-decoration: none;
+      display: flex; align-items: center; gap: 0.4rem;
+      transition: color 0.2s;
+    }
+    .project-link:hover { color: var(--accent-blue); }
+    .project-num {
+      position: absolute; top: 1.5rem; right: 1.5rem;
+      font-family: 'Orbitron', monospace; font-size: 2.5rem;
+      font-weight: 900; color: rgba(0,212,255,0.05);
+      line-height: 1;
+    }
+
+    /* ---- CONTACT ---- */
+    .contact-wrapper { display: grid; grid-template-columns: 1fr 1.2fr; gap: 4rem; align-items: start; }
+    .contact-info p { color: rgba(232,244,253,0.55); line-height: 1.8; font-size: 1rem; margin-bottom: 2rem; }
+    .social-links { display: flex; flex-direction: column; gap: 0.75rem; }
+    .social-link {
+      display: flex; align-items: center; gap: 1rem;
+      font-family: 'Share Tech Mono', monospace; font-size: 0.82rem;
+      color: var(--text-muted); text-decoration: none;
+      padding: 0.85rem 1.25rem;
+      border: 1px solid rgba(0,212,255,0.1);
+      background: rgba(0,212,255,0.02);
+      transition: all 0.25s;
+    }
+    .social-link:hover { color: var(--accent-blue); border-color: rgba(0,212,255,0.4); background: rgba(0,212,255,0.06); }
+    .social-link svg { width: 16px; height: 16px; opacity: 0.6; flex-shrink: 0; }
+    .social-link:hover svg { opacity: 1; }
+
+    /* Contact Form */
+    .contact-form { display: flex; flex-direction: column; gap: 1rem; }
+    .form-group { position: relative; }
+    .form-label {
+      font-family: 'Share Tech Mono', monospace; font-size: 0.68rem;
+      letter-spacing: 0.15em; color: var(--text-muted);
+      display: block; margin-bottom: 0.5rem;
+    }
+    .form-input, .form-textarea {
+      width: 100%; padding: 0.85rem 1rem;
+      background: rgba(5,15,25,0.8);
+      border: 1px solid rgba(0,212,255,0.15);
+      color: var(--text-primary);
+      font-family: 'Share Tech Mono', monospace; font-size: 0.82rem;
+      outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form-input:focus, .form-textarea:focus {
+      border-color: rgba(0,212,255,0.5);
+      box-shadow: 0 0 15px rgba(0,212,255,0.08);
+    }
+    .form-textarea { resize: vertical; min-height: 130px; }
+    .form-submit {
+      font-family: 'Share Tech Mono', monospace; font-size: 0.82rem;
+      letter-spacing: 0.15em; padding: 1rem 2rem;
+      border: 1px solid var(--accent-blue);
+      color: var(--bg-primary); background: var(--accent-blue);
+      cursor: pointer; transition: all 0.25s; align-self: flex-start;
+      clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+    }
+    .form-submit:hover { background: transparent; color: var(--accent-blue); }
+
+    /* ---- FOOTER ---- */
+    footer {
+      position: relative; z-index: 10;
+      border-top: 1px solid rgba(0,212,255,0.08);
+      padding: 2rem 4rem;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-brand {
+      font-family: 'Orbitron', monospace; font-weight: 900;
+      font-size: 1rem; color: var(--accent-blue);
+      text-shadow: 0 0 15px rgba(0,212,255,0.4);
+    }
+    .footer-copy {
+      font-family: 'Share Tech Mono', monospace; font-size: 0.72rem;
+      color: var(--text-muted); letter-spacing: 0.1em;
+    }
+    .footer-copy span { color: var(--accent-green); }
+
+    /* ---- DIVIDERS ---- */
+    .section-divider {
+      position: relative; z-index: 10;
+      display: flex; align-items: center; gap: 1rem;
+      padding: 0 4rem; margin: 0;
+      opacity: 0.3;
+    }
+    .section-divider::before, .section-divider::after {
+      content: ''; flex: 1; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0,212,255,0.5));
+    }
+    .section-divider::after { background: linear-gradient(270deg, transparent, rgba(0,212,255,0.5)); }
+
+    /* ---- SCROLL INDICATOR ---- */
+    .scroll-indicator {
+      position: absolute; bottom: 2.5rem; left: 50%;
+      transform: translateX(-50%); z-index: 10;
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+      animation: fadeInUp 1s ease 1.5s both;
+    }
+    .scroll-indicator span {
+      font-family: 'Share Tech Mono', monospace; font-size: 0.62rem;
+      letter-spacing: 0.2em; color: var(--text-muted);
+    }
+    .scroll-mouse {
+      width: 22px; height: 34px; border: 1px solid rgba(0,212,255,0.3);
+      border-radius: 11px; display: flex; justify-content: center; padding-top: 6px;
+    }
+    .scroll-dot { width: 3px; height: 7px; background: var(--accent-blue); border-radius: 2px; animation: scrollDown 1.5s ease infinite; }
+    @keyframes scrollDown { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(10px); opacity: 0; } }
+
+    /* ---- ANIMATIONS ---- */
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes glowPulse { 0%, 100% { text-shadow: 0 0 20px rgba(0,212,255,0.3); } 50% { text-shadow: 0 0 40px rgba(0,212,255,0.7), 0 0 60px rgba(0,212,255,0.3); } }
+
+    .hero-name { animation: fadeInUp 0.8s ease both; }
+    .hero-tag { animation: fadeInUp 0.8s ease 0.1s both; }
+    .hero-typed-wrapper { animation: fadeInUp 0.8s ease 0.2s both; }
+    .hero-desc { animation: fadeInUp 0.8s ease 0.3s both; }
+    .btn-group { animation: fadeInUp 0.8s ease 0.4s both; }
+    .hero-stats { animation: fadeInUp 0.8s ease 0.5s both; }
+    .hero-image-wrapper { animation: fadeIn 1s ease 0.3s both; }
+
+    /* ---- RESPONSIVE ---- */
+    @media (max-width: 900px) {
+      #hero { padding-left: 1.5rem; padding-right: 1.5rem; }
+      .hero-inner { grid-template-columns: 1fr; gap: 3rem; }
+      .hero-image-wrapper { order: -1; }
+      .about-grid { grid-template-columns: 1fr; }
+      .contact-wrapper { grid-template-columns: 1fr; gap: 2.5rem; }
+      .zed10-logo-large { display: none; }
+      nav { padding: 0.75rem 1.5rem; }
+      .nav-links { gap: 1.2rem; }
+    }
+    @media (max-width: 600px) {
+      .nav-links { display: none; }
+      .hero-image-frame { width: 240px; height: 290px; }
+      .hero-stats { gap: 1.5rem; }
+      section { padding: 4rem 1.5rem; }
+      footer { padding: 1.5rem 1.5rem; }
+    }
+
+    /* Scroll reveal */
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+  <div class="grid-bg"></div>
+  <canvas id="matrix-canvas"></canvas>
+  <div class="noise"></div>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">zed<span>10</span></div>
+    <ul class="nav-links">
+      <li><a href="#about">about</a></li>
+      <li><a href="#identity">identity</a></li>
+      <li><a href="#skills">skills</a></li>
+      <li><a href="#projects">projects</a></li>
+      <li><a href="#contact">contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero" class="full-width" style="padding: 0 4rem; min-height: 100vh; display: flex; align-items: center; max-width: 100%;">
+    <div class="hero-inner">
+      <div class="hero-content">
+        <div class="hero-tag">INITIALIZING PORTFOLIO...</div>
+        <div class="hero-name">
+          <div class="first">SAAD HAMADA</div>
+          <div class="last">ELZAYAT</div>
+        </div>
+        <div class="hero-typed-wrapper">
+          <span class="prompt">~/zed10 $</span>
+          <span id="typed"></span>
+        </div>
+        <p class="hero-desc">
+          Building robust systems from the ground up — from backend APIs to bare-metal embedded firmware. 
+          Obsessed with how things work at the lowest level.
+        </p>
+        <div class="btn-group">
+          <a href="#projects" class="btn-primary">VIEW PROJECTS</a>
+          <a href="#contact" class="btn-secondary">GET IN TOUCH</a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat">
+            <div class="stat-num">2+</div>
+            <div class="stat-label">YEARS CODING</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num">C#</div>
+            <div class="stat-label">MAIN STACK</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num">∞</div>
+            <div class="stat-label">CURIOSITY</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-image-wrapper">
+        <div class="hero-image-frame">
+  
+          <div class="hero-photo-placeholder">
+              <img src="image.PNG" alt="Saad Hamada Elzayat" style="width:100%; height:100%; object-fit:cover; position:absolute; top:0; left:0; z-index:1; clip-path:polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+            <span>PHOTO NOT AVAILABLE</span>
+          </div>
+          <div class="scan-line"></div>
+          <div class="hero-corner tl"></div>
+          <div class="hero-corner tr"></div>
+          <div class="hero-corner bl"></div>
+          <div class="hero-corner br"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scroll-indicator" style="position:absolute; bottom:2.5rem; left:50%; transform:translateX(-50%);">
+      <div class="scroll-mouse">
+        <div class="scroll-dot"></div>
+      </div>
+      <span>SCROLL</span>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" style="max-width:1100px; margin: 0 auto; padding: 6rem 2rem;">
+    <div class="reveal">
+      <div class="section-label">01 — ABOUT</div>
+      <h2 class="section-title">Who is <span>Saad</span>?</h2>
+    </div>
+    <div class="about-grid reveal">
+      <div class="about-text">
+        <p>
+          I'm a <strong>Backend Developer</strong> with a deep focus on building scalable, well-structured systems using <strong>C# and SQL</strong>. My approach to software is shaped by a genuine curiosity about how things work beneath the surface.
+        </p>
+        <p>
+          Beyond web backends, I'm passionate about <strong>low-level programming</strong> — from writing firmware for microcontrollers to studying OS internals, memory management, and process synchronization. I enjoy the challenge of programming in environments where every byte counts.
+        </p>
+        <p>
+          When I'm not writing code, I'm probably reading about <strong>operating system design</strong>, fine-tuning my Linux environment, or playing chess.
+        </p>
+        <div class="about-stack">
+          <span class="stack-tag">C#</span>
+          <span class="stack-tag">SQL Server</span>
+          <span class="stack-tag">C / C++</span>
+          <span class="stack-tag">Embedded C</span>
+          <span class="stack-tag">Linux</span>
+          <span class="stack-tag">ATmega32</span>
+          <span class="stack-tag">Git</span>
+          <span class="stack-tag">ZSH</span>
+        </div>
+      </div>
+      <div class="about-terminal">
+        <div class="terminal-bar">
+          <div class="t-dot" style="background:#ff5f56"></div>
+          <div class="t-dot" style="background:#ffbd2e"></div>
+          <div class="t-dot" style="background:#27c93f"></div>
+          <span style="font-family:'Share Tech Mono',monospace; font-size:0.7rem; color:#3a5a72; margin-left:0.5rem;">saad@zed10 ~ whoami</span>
+        </div>
+        <div class="terminal-body">
+          <div class="t-comment"># Developer Profile</div>
+          <div>
+            <span class="t-key">name</span> = <span class="t-str">"Saad Hamada Elzayat"</span>
+          </div>
+          <div>
+            <span class="t-key">alias</span> = <span class="t-str">"zed10"</span>
+          </div>
+          <div>
+            <span class="t-key">focus</span> = <span class="t-arr">["Backend", "Embedded"]</span>
+          </div>
+          <div>
+            <span class="t-key">stack</span> = <span class="t-arr">["C#", "SQL", "C++"]</span>
+          </div>
+          <div>
+            <span class="t-key">os</span> = <span class="t-str">"Arch Linux"</span>
+          </div>
+          <div>
+            <span class="t-key">shell</span> = <span class="t-str">"ZSH + P10k"</span>
+          </div>
+          <div>
+            <span class="t-key">chess_rating</span> = <span class="t-val">1400+</span>
+          </div>
+          <div>
+            <span class="t-key">coffee</span> = <span class="t-val">true</span>
+          </div>
+          <div style="margin-top:0.5rem; color:#27c93f;">$ █</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ZED10 IDENTITY -->
+  <section id="identity" style="max-width:1100px; margin: 0 auto; padding: 6rem 2rem;">
+    <div class="reveal">
+      <div class="section-label">02 — BRAND</div>
+      <h2 class="section-title">The <span>zed10</span> Identity</h2>
+    </div>
+    <div class="zed10-section reveal">
+      <div class="zed10-logo-large">Z10</div>
+      <div class="zed10-content">
+        <p>
+          <strong>zed10</strong> is more than a username — it's a philosophy. The name fuses the terminal's "Z" (as in ZSH, the ultimate shell) with "10", a nod to binary and the pursuit of perfection in systems thinking.
+        </p>
+        <p>
+          The brand represents a commitment to <strong>precision, minimalism, and going deep</strong>. Whether it's a C# API, an embedded firmware loop, or a beautifully-configured terminal prompt — every piece of the system should be intentional and efficient.
+        </p>
+        <p>
+          My terminal setup (ZSH with Powerlevel10k) isn't just aesthetic — it's a productivity interface I've crafted to remove friction and maximize focus. That same philosophy drives every technical decision I make.
+        </p>
+        <div class="zed10-badges">
+          <span class="zed10-badge">ZSH + P10K</span>
+          <span class="zed10-badge">NEOVIM</span>
+          <span class="zed10-badge">TMUX</span>
+          <span class="zed10-badge">ARCH LINUX</span>
+          <span class="zed10-badge">DOTFILES</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills" style="max-width:1100px; margin: 0 auto; padding: 6rem 2rem;">
+    <div class="reveal">
+      <div class="section-label">03 — ARSENAL</div>
+      <h2 class="section-title">Technical <span>Skills</span></h2>
+    </div>
+    <div class="skills-grid reveal">
+
+      <div class="skill-card">
+        <span class="skill-icon">⚙️</span>
+        <div class="skill-name">C++</div>
+        <div class="skill-level">ADVANCED</div>
+        <div class="skill-bar"><div class="skill-bar-fill" style="width:82%"></div></div>
+      </div>
+
+      <div class="skill-card">
+        <span class="skill-icon">🔷</span>
+        <div class="skill-name">C#</div>
+        <div class="skill-level">PROFICIENT</div>
+        <div class="skill-bar"><div class="skill-bar-fill" style="width:88%"></div></div>
+      </div>
+
+      <div class="skill-card">
+        <span class="skill-icon">🗄️</span>
+        <div class="skill-name">SQL</div>
+        <div class="skill-level">PROFICIENT</div>
+        <div class="skill-bar"><div class="skill-bar-fill" style="width:80%"></div></div>
+      </div>
+
+      <div class="skill-card">
+        <span class="skill-icon">🐧</span>
+        <div class="skill-name">Linux</div>
+        <div class="skill-level">ADVANCED</div>
+        <div class="skill-bar"><div class="skill-bar-fill" style="width:90%"></div></div>
+      </div>
+
+      <div class="skill-card">
+        <span class="skill-icon">🔌</span>
+        <div class="skill-name">ATmega32</div>
+        <div class="skill-level">INTERMEDIATE</div>
+        <div class="skill-bar"><div class="skill-bar-fill" style="width:72%"></div></div>
+      </div>
+
+      <div class="skill-card">
+        <span class="skill-icon">🔧</span>
+        <div class="skill-name">Embedded C</div>
+        <div class="skill-level">INTERMEDIATE</div>
+        <div class="skill-bar"><div class="skill-bar-fill" style="width:75%"></div></div>
+      </div>
+
+      <div class="skill-card">
+        <span class="skill-icon">🌿</span>
+        <div class="skill-name">Git</div>
+        <div class="skill-level">PROFICIENT</div>
+        <div class="skill-bar"><div class="skill-bar-fill" style="width:85%"></div></div>
+      </div>
+
+      <div class="skill-card">
+        <span class="skill-icon">💻</span>
+        <div class="skill-name">OS Internals</div>
+        <div class="skill-level">LEARNING</div>
+        <div class="skill-bar"><div class="skill-bar-fill" style="width:60%"></div></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects" style="max-width:1100px; margin: 0 auto; padding: 6rem 2rem;">
+    <div class="reveal">
+      <div class="section-label">04 — PROJECTS</div>
+      <h2 class="section-title">Featured <span>Work</span></h2>
+    </div>
+    <div class="projects-grid reveal">
+
+      <div class="project-card">
+        <div class="project-num">01</div>
+        <div class="project-type">EMBEDDED SYSTEMS</div>
+        <div class="project-title">Smart Lock System</div>
+        <p class="project-desc">
+          A password-protected electronic lock built on ATmega32 microcontrollers. Uses I2C protocol for inter-MCU communication, EEPROM for persistent password storage, and a servo-motor actuator. Features a real-time alarm system on failed attempts.
+        </p>
+        <div class="project-tags">
+          <span class="project-tag">Embedded C</span>
+          <span class="project-tag">ATmega32</span>
+          <span class="project-tag">I2C</span>
+          <span class="project-tag">EEPROM</span>
+          <span class="project-tag">Servo Motor</span>
+        </div>
+        <div class="project-links">
+          <a href="#" class="project-link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+            SOURCE CODE
+          </a>
+          <a href="#" class="project-link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            DEMO
+          </a>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-num">02</div>
+        <div class="project-type">SYSTEM PROGRAMMING</div>
+        <div class="project-title">OS Synchronization Labs</div>
+        <p class="project-desc">
+          A series of hands-on labs implementing classic OS synchronization primitives from scratch — including semaphores, mutexes, monitors, and classic problems like Dining Philosophers and Reader-Writer. Implements both deadlock-safe and high-throughput variants.
+        </p>
+        <div class="project-tags">
+          <span class="project-tag">C</span>
+          <span class="project-tag">POSIX Threads</span>
+          <span class="project-tag">Semaphores</span>
+          <span class="project-tag">Mutexes</span>
+          <span class="project-tag">Linux</span>
+        </div>
+        <div class="project-links">
+          <a href="#" class="project-link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+            SOURCE CODE
+          </a>
+        </div>
+      </div>
+
+      <!-- Add More Card -->
+      <div class="project-card" style="border-style: dashed; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 280px; gap: 1rem; cursor: pointer; opacity: 0.4; transition: opacity 0.3s;" onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='0.4'">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" stroke-width="1"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <span style="font-family:'Share Tech Mono',monospace; font-size:0.72rem; letter-spacing:0.2em; color:var(--text-muted);">MORE COMING SOON</span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" style="max-width:1100px; margin: 0 auto; padding: 6rem 2rem;">
+    <div class="reveal">
+      <div class="section-label">05 — CONTACT</div>
+      <h2 class="section-title">Get In <span>Touch</span></h2>
+    </div>
+    <div class="contact-wrapper reveal">
+      <div class="contact-info">
+        <p>
+          Whether it's a project collaboration, a job opportunity, or just a technical discussion — my inbox is always open. Especially if it involves C, low-level systems, or debating Linux distros.
+        </p>
+        <div class="social-links">
+          <a href="https://www.linkedin.com/in/mohamed-elzayat-23b768355" target="_blank" class="social-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+            Mohamed-Elzayat
+          </a>
+          <a href="https://github.com/blackzed92" target="_blank" class="social-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+            blackzed92
+          </a>
+          <a href="mailto:mozayat10@gmail.com" class="social-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            mozayat10@gmail.com
+          </a>
+        </div>
+      </div>
+
+      <form class="contact-form" onsubmit="handleSubmit(event)">
+        <div class="form-group">
+          <label class="form-label">// NAME</label>
+          <input type="text" class="form-input" placeholder="Your name..." required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">// EMAIL</label>
+          <input type="email" class="form-input" placeholder="your@email.com" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">// MESSAGE</label>
+          <textarea class="form-textarea" placeholder="What's on your mind?..." required></textarea>
+        </div>
+        <button type="submit" class="form-submit">SEND_MESSAGE()</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-brand">zed10</div>
+    <div class="footer-copy">
+      © 2024 Saad Hamada Elzayat — Built with <span>♥</span> & too much coffee
+    </div>
+    <div class="footer-copy" style="font-size:0.62rem; opacity:0.4;">
+      ~/saad/portfolio master ✔
+    </div>
+  </footer>
+
+  <script>
+    // ---- CURSOR ----
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cursor.style.left = mx - 5 + 'px';
+      cursor.style.top = my - 5 + 'px';
+    });
+    (function animRing() {
+      rx += (mx - rx - 18) * 0.12;
+      ry += (my - ry - 18) * 0.12;
+      ring.style.left = rx + 'px';
+      ring.style.top = ry + 'px';
+      requestAnimationFrame(animRing);
+    })();
+    document.querySelectorAll('a, button, .skill-card, .project-card').forEach(el => {
+      el.addEventListener('mouseenter', () => { ring.style.width = '50px'; ring.style.height = '50px'; ring.style.borderColor = 'rgba(0,255,157,0.5)'; });
+      el.addEventListener('mouseleave', () => { ring.style.width = '36px'; ring.style.height = '36px'; ring.style.borderColor = 'rgba(0,212,255,0.5)'; });
+    });
+
+    // ---- TYPED.JS ----
+    new Typed('#typed', {
+      strings: ['Backend Developer', 'Embedded Systems Enthusiast', 'Linux Geek', 'Chess Player'],
+      typeSpeed: 55,
+      backSpeed: 30,
+      backDelay: 1800,
+      loop: true,
+      cursorChar: '█',
+    });
+
+    // ---- MATRIX RAIN ----
+    const canvas = document.getElementById('matrix-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+    const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノ';
+    const cols = Math.floor(canvas.width / 20);
+    const drops = Array(cols).fill(1);
+    function drawMatrix() {
+      ctx.fillStyle = 'rgba(5, 10, 15, 0.05)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#00d4ff';
+      ctx.font = '14px Share Tech Mono';
+      drops.forEach((y, i) => {
+        const ch = chars[Math.floor(Math.random() * chars.length)];
+        ctx.fillText(ch, i * 20, y * 20);
+        if (y * 20 > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+      });
+    }
+    setInterval(drawMatrix, 55);
+
+    // ---- SCROLL REVEAL ----
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+    }, { threshold: 0.12 });
+    reveals.forEach(el => observer.observe(el));
+
+    // ---- FORM ----
+    function handleSubmit(e) {
+      e.preventDefault();
+      const btn = e.target.querySelector('.form-submit');
+      const orig = btn.textContent;
+      btn.textContent = 'SENDING...';
+      setTimeout(() => {
+        btn.textContent = 'MESSAGE_SENT ✔';
+        btn.style.borderColor = 'var(--accent-green)';
+        btn.style.color = 'var(--accent-green)';
+        setTimeout(() => {
+          btn.textContent = orig;
+          btn.style.borderColor = '';
+          btn.style.color = '';
+          e.target.reset();
+        }, 2500);
+      }, 1000);
+    }
+  </script>
+</body>
+</html>
